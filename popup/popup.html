@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="url-search-wrapper">
+        <input type="text" id="url_search" placeholder="Search your favorite anime!">
+        <button id="search"><img src="images/arrow-right.svg" alt=""></button>
+    </div>
+    <span id="no_results" class="hidden">No results found!</span>
+    <div class="no-search" id="no_search">
+        <h1>Search for an anime!</h1>
+    </div>
+    <div class="search-list hidden" id="search_results">
+        <div class="item demo">
+            <div class="item-title skeleton">Anime Title</div>
+            <div class="item-description skeleton"></div>
+            <div class="item-demo-2nd-line skeleton"></div>
+        </div>
+        <div class="item demo">
+            <div class="item-title skeleton">Anime Title</div>
+            <div class="item-description skeleton"></div>
+            <div class="item-demo-2nd-line skeleton"></div>
+        </div>
+        <div class="item demo">
+            <div class="item-title skeleton">Anime Title</div>
+            <div class="item-description skeleton"></div>
+            <div class="item-demo-2nd-line skeleton"></div>
+        </div>
+    </div>
+    <div class="anime-box hidden" id="anime_infobox">
+        <div class="anime-image skeleton" id="cover_holder"></div>
+        <div class="anime-infos">
+            <h1 class="anime-title skeleton" id="anime_title"></h1>
+            <div class="anime-stats">
+                <p class="stat skeleton">Seasons:<span id="season_count"></span></p>
+                <p class="stat skeleton">Filme:<span id="film_count"></span></p>
+            </div>
+        </div>
+    </div>
+    <div class="seasons hidden" id="season_list">
+        <div class="season demo" id="demo_season">
+            <span class="head skeleton">
+                <h2 class="season-title">Season 1</h2>
+                <a class="download">
+                    <img src="images/download.svg">
+                </a>
+            </span>
+            <div class="episodes">
+                <span class="episode skeleton">
+                    <h3 class="episode-title"></h3>
+                    <a class="download"><img src="images/download.svg"></a>
+                </span>
+                <span class="episode skeleton">
+                    <h3 class="episode-title"></h3>
+                    <a class="download"><img src="images/download.svg"></a>
+                </span>
+                <span class="episode skeleton">
+                    <h3 class="episode-title"></h3>
+                    <a class="download"><img src="images/download.svg"></a>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="films hidden" id="film_list">
+        <div class="film demo" id="demo_film">
+            <span class="head skeleton">
+                <h2 class="film-title">Filme</h2>
+                <a class="download">
+                    <img src="images/download.svg">
+                </a>
+            </span>
+            <div class="episodes">
+                <span class="episode skeleton">
+                    <h3 class="episode-title"></h3>
+                    <a class="download"><img src="images/download.svg"></a>
+                </span>
+                <span class="episode skeleton">
+                    <h3 class="episode-title"></h3>
+                    <a class="download"><img src="images/download.svg"></a>
+                </span>
+            </div>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>

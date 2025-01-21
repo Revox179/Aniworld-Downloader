@@ -1,0 +1,31 @@
+{
+    "manifest_version": 3,
+    "name": "AniWorld-Downloader",
+    "version": "1.0.0",
+    "description": "Download anime from AniWorld",
+    "icons": {
+        "64": "logo-64.png"
+    },
+    "background": {
+        "scripts": [
+            "background-script.js"
+        ]
+    },
+    "permissions": [
+        "downloads",
+        "webRequest"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "action": {
+        "default_icon": "logo-64.png",
+        "default_title": "AniWorld Downloader",
+        "default_popup": "popup/popup.html"
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "{b3ec44c7-0eff-4a6f-9b2c-90d27401b255}"
+        }
+    }
+}

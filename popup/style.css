@@ -1,0 +1,324 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Arial";
+    color: rgb(232, 230, 227);
+    transition: all 0.8s ease;
+}
+
+:root {
+    --aniworld-color: rgb(5, 28, 143);
+}
+
+html, body {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+    height: 500px;
+    min-height: 500px;
+    max-height: 500px;
+    overflow: auto;
+}
+
+html { background-color: #0c121a; }
+
+.url-search-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 0.5rem;
+}
+
+.url-search-wrapper input {
+    border: 2px solid var(--aniworld-color);
+    border-right: none;
+    border-radius: 999px 0px 0px 999px;
+    background-color: rgb(32, 38, 50);
+    padding: 0.5rem 0.7rem;
+    outline: none;
+    width: 100%;
+}
+
+.url-search-wrapper button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: var(--aniworld-color);
+    border-radius: 0px 999px 999px 0px;
+    padding: 0.4rem 0.7rem;
+    cursor: pointer;
+}
+
+#no_results {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    font-style: italic;
+    color: #f0f0f0;
+    text-align: center;
+}
+
+.no-search {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: auto 0;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #f0f0f0;
+    text-align: center;
+}
+
+.search-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0.5rem;
+    gap: 1rem;
+    overflow: auto;
+}
+
+.search-list .item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    border-radius: 6px;
+    padding: 2px 5px;
+}
+
+.search-list .item:hover {
+    background-color: #202632;
+}
+
+.search-list .item.demo:hover {
+    background-color: transparent;
+    cursor: default;
+}
+
+.search-list .item em {
+    font-style: normal;
+    font-weight: 600;
+}
+
+.search-list .item .item-title {
+    height: 1.5rem;
+    width: max-content;
+    max-width: 100%;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-list .item .item-description {
+    display: block;
+    height: 3.5rem;
+    width: 100%;
+    font-size: 0.9rem;
+    color: #a0a0a0;
+    white-space: normal;
+    overflow: hidden;
+}
+
+.search-list .item .item-demo-2nd-line {
+    display: flex;
+    margin-top: 0.2rem;
+    height: 1.2rem;
+    width: 60%;
+}
+
+.anime-box {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 0.7rem;
+    padding-top: 0.5rem;
+    gap: 0.7rem;
+}
+
+.anime-box * {
+    user-select: none;
+}
+
+.anime-image {
+    display: flex;
+    width: 90px;
+    min-width: 90px;
+    height: 120px;
+    min-height: 120px;
+}
+
+.anime-image img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.anime-infos {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+}
+
+.anime-title {
+    height: 1.5rem;
+    font-size: 1.2rem;
+    margin-bottom: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.anime-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.stat {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.seasons, .films {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.2rem 0.4rem;
+}
+
+.head {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    min-height: 2rem;
+    align-items: center;
+    padding: 0.5rem 1.5rem;
+    background-color: #202632;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.fold {
+    padding-top: 0rem !important;
+    padding-bottom: 0rem !important;
+    height: 0px !important;
+    overflow: hidden;
+}
+
+.season-title, .film-title {
+    font-size: 1.2rem;
+    width: 100%;
+}
+
+.download, .download-all {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1/1;
+    border-radius: 100%;
+    cursor: pointer;
+}
+
+.head > .download, .head > .download-all {
+    height: 24px;
+}
+
+.episode > .download, .episode > .download-all{
+    height: 20px;
+}
+
+.download img, .download-all img{
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1/1;
+}
+
+.episodes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.5rem;
+    counter-reset: episodes 0;
+}
+
+.episode {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    padding: 0.5rem;
+    min-height: 1rem;
+    border-radius: 6px;
+    cursor: default;
+    counter-increment: episodes 1;
+    transition: all 0.3s ease;
+}
+
+.episode::before {
+    content: counter(episodes);
+    display: block;
+    min-width: 0.5rem;
+    height: 100%;
+    margin-right: 0.5rem;
+}
+
+.episode:hover {
+    background-color: #20263280;
+}
+
+.episode-title {
+    width: 100%;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.skeleton {
+    border-radius: 10px;
+    overflow: hidden;
+    animation: skeleton-loading 2s infinite;
+    color: transparent;
+    cursor: default;
+}
+
+.skeleton * {
+    background-color: transparent;
+    color: transparent;
+    cursor: default;
+    opacity: 0%;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-color: #202632;
+    }
+    50% {
+        background-color: #2a3747;
+    }
+    100% {
+        background-color: #202632;
+    }
+}
