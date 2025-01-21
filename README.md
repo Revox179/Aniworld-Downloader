@@ -2,9 +2,9 @@
 
 This is a simple Firefox extension to download anime easily from [aniworld.to](https://aniworld.to) website.
 
-<div align="center">
-    <img src=".github/demo-1.png" alt="Demonstration Screenshot 1" width="400" style="display: inline-block;"/>
-    <img src=".github/demo-2.png" alt="Demonstration Screenshot 2" width="400" style="display: inline-block;"/>
+<div style="display: flex; justify-content: center; align-items: center;flex-direction: row;gap: 10px;">
+    <img src=".github/demo-1.png" alt="Demonstration Screenshot 1" height="400" style="border-radius: 8px"/>
+    <img src=".github/demo-2.png" alt="Demonstration Screenshot 2" height="400" style="border-radius: 8px"/>
 </div>
 
 > [!NOTE]
