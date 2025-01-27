@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "AniWorld-Downloader",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Download anime from AniWorld",
     "icons": {
         "64": "logo-64.png"
