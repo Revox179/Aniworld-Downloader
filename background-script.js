@@ -34,7 +34,7 @@ browser.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
                 // start download
                 browser.downloads.download({
                     url: source,
-                    filename: msg.filename,
+                    filename: sanitizeFilename(msg.filename),
                     conflictAction: "uniquify"
                 }).then(downloadStarted, downloadFailed);
                 sendResponse({ result: true });
@@ -49,11 +49,13 @@ browser.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 });
 
 
-/**
+/********************************************************************************
  * Following functions belong to the api and used to fetch necessary
  * information about the animes like title, cover, seasons, films and
  * episode links and corresponding video links for downloading.
- */
+ ********************************************************************************/
+
+
 async function fetchAndParse(url) {
     try {
         const response = await fetch(url);
@@ -161,10 +163,10 @@ async function getVideoLink(episode) {
 }
 
 
-/**
+/********************************************************************************
  * Following functions are used to handle the download requests from the
  * popup script and start the download process.
- */
+ ********************************************************************************/
 
 async function getVideoSource(url) {
     try {
@@ -179,6 +181,10 @@ async function getVideoSource(url) {
     }
 
 
+}
+
+function sanitizeFilename(filename) {
+    return filename.replace(/[^a-zA-Z0-9] /g, '') || "video";
 }
 
 function downloadStarted(id) {
