@@ -16,12 +16,15 @@
         "webRequest"
     ],
     "host_permissions": [
-        "<all_urls>"
+        "*://aniworld.to/*",
+        "*://vidoza.net/*",
+        "*://videzz.net/*"
     ],
     "action": {
         "default_icon": "logo-64.png",
         "default_title": "AniWorld Downloader",
-        "default_popup": "popup/popup.html"
+        "default_popup": "popup/popup.html",
+        "default_area": "navbar"
     },
     "browser_specific_settings": {
         "gecko": {
