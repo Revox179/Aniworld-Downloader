@@ -9,21 +9,72 @@
 
 :root {
     --aniworld-color: rgb(5, 28, 143);
+    --max-width: 300px;
+    --max-height: 500px;
+    --page-nav-height: 50px;
 }
 
 html, body {
     display: flex;
     flex-direction: column;
-    width: 300px;
-    min-width: 300px;
-    max-width: 300px;
-    height: 500px;
-    min-height: 500px;
-    max-height: 500px;
+    width: var(--max-width);
+    min-width: var(--max-width);
+    max-width: var(--max-width);
+    height: var(--max-height);
+    min-height: var(--max-height);
+    max-height: var(--max-height);
     overflow: auto;
 }
 
 html { background-color: #0c121a; }
+
+#page_container {
+    display: flex;
+    flex-direction: column;
+    width: var(--max-width);
+    min-width: var(--max-width);
+    max-width: var(--max-width);
+    height: calc(var(--max-height) - var(--page-nav-height));
+    min-height: calc(var(--max-height) - var(--page-nav-height));
+    max-height: calc(var(--max-height) - var(--page-nav-height));
+    overflow: auto;
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+#page_navbar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: 1rem;
+    width: var(--max-width);
+    height: var(--page-nav-height);
+    min-height: var(--page-nav-height);
+    max-height: var(--page-nav-height);
+    padding: 0.5rem;
+    background-color: #202632;
+    border-top: 2px solid var(--aniworld-color);
+}
+
+.page-nav-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background-color: #202632;
+    color: #f0f0f0;
+    padding: 0.5rem;
+    border-radius: 100px;
+    cursor: pointer;
+}
+
+.page-nav-button:hover {
+    background-color: #2a3747;
+}
 
 .url-search-wrapper {
     display: flex;
