@@ -146,9 +146,9 @@ function createDownloadPage(url) {
         }
 
         // add toggle season/film fold event
-        document.querySelectorAll(".head").forEach(head => {
+        document.querySelectorAll(".head h2").forEach(head => {
             head.addEventListener("click", () => {
-                head.nextElementSibling.classList.toggle("fold");
+                head.parentElement.nextElementSibling.classList.toggle("fold");
             });
         });
     })
@@ -334,4 +334,14 @@ function addDownloadListener() {
             });
         });
     });
+
+    document.querySelectorAll("a.download-all").forEach(download_button => {
+        download_button.addEventListener("click", () => {
+            const episodes = download_button.parentElement.nextElementSibling
+            for (let episode of episodes.children) {
+                episode.querySelector("a.download").click();
+            }
+        });
+    });
+
 }
