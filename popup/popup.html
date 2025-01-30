@@ -3,7 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style/main.css">
+    <link rel="stylesheet" href="style/search_page.css">
+    <link rel="stylesheet" href="style/download_page.css">
+    <link rel="stylesheet" href="style/settings_page.css">
 </head>
 
 <body>
@@ -89,19 +92,63 @@
                 </div>
             </div>
         </div>
+        <div class="page hidden" id="download_page">
+            <p id="no_downloads">Currently no downloads</p>
+        </div>
+        <div class="page hidden" id="settings_page">
+            <div id="disclaimer">
+                <h1>Disclaimer</h1>
+                <p>
+                    This extension does not share or distribute copyrighted content. It simply provides tools to access information already freely and publicly available resources. The developer is not responsible for external links or their content.<br>
+                    If you have concerns regarding the content accessed through this tool, please contact the administrators, owners, or hosts of the respective websites directly.
+                </p>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-title">Parallel downloads</div>
+
+                <div class="settings-item-description">
+                    The amount of downloads that will be done at the same time. Too many downloads at the same time can
+                    slow down your internet connection or limitations from the server.
+                </div>
+                <div class="settings-item-body">
+                    <div class="increase-element">
+                        <div role="button" id="decrease_parallel_downloads">-</div>
+                        <input type="number" id="parallel_downloads" value="1">
+                        <div role="button" id="increase_parallel_downloads">+</div>
+                    </div>
+                </div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-title">Filenaming</div>
+                <div class="settings-item-description">
+                    The filename of downloaded files. You can use the following placeholders:
+                    <ul>
+                        <li>{anime_title} - The title of the anime</li>
+                        <li>{episode_title} - The title of the episode</li>
+                        <li>{season_number} - The number of the season</li>
+                        <li>{episode_number} - The number of the episode</li>
+                    </ul>
+                </div>
+                <div class="settings-item-body">
+                    <input type="text" id="filename"
+                        value="{anime_title} - {episode_title} S{season_number}E{episode_number}">
+                </div>
+            </div>
+        </div>
     </div>
     <div id="page_navbar">
-        <div class="page-nav-button" id="search_tab">
-            <img src="images/search-icon.svg" alt="">
+        <div class="tab selected" id="search_tab" data-target="search_page">
+            <img src="images/search-sharp.svg" alt="">
         </div>
-        <div class="page-nav-button" id="download_tab">
+        <div class="tab" id="download_tab" data-target="download_page">
             <img src="images/download-icon.svg" alt="">
         </div>
-        <div class="page-nav-button" id="settings_tab">
+        <div class="tab" id="settings_tab" data-target="settings_page">
             <img src="images/gear-icon.svg" alt="">
         </div>
-
     </div>
-    <script src="popup.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/search_page.js"></script>
 </body>
+
 </html>
