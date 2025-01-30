@@ -187,8 +187,19 @@ function sanitizeFilename(filename) {
     return filename.replace(/[^a-zA-Z0-9] /g, '') || "video";
 }
 
-function downloadStarted(id) {
-    console.log('Download started: ' + id);
+async function downloadStarted(id) {
+    const [downloadItem] = await browser.downloads.search({ id });
+
+    if (!downloadItem) {
+        console.error(`Download item with id ${id} not found after start event.`);
+        return;
+    }
+
+    const { filename, startTime: start, url } = downloadItem;
+    await browser.storage.local.set(
+        { [id]: { filename, start, ends: null, state: "active", url } }
+    )
+    console.log(`Download started: ${filename}`);
 }
 
 function downloadFailed(error) {
