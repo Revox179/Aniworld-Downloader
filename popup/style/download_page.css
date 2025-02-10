@@ -75,9 +75,10 @@
 
 .download-item-progress-fill {
     height: 100%;
-    width: 0%;
+    width: 100%;
     border-radius: 4px;
-    background-color: #4a90e2;
+    opacity: 100% !important; /* Opacity and background color are otherwise set from .skeleton * rule in main.css */
+    background-color: #4a90e2 !important;
 }
 
 .download-item-progress-text {

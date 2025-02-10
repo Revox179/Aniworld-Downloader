@@ -1,3 +1,33 @@
+var downloadItemIDs = new Array();
+
+// Handle download state changes (in_progress, complete)
+browser.downloads.onChanged.addListener(downloadDelta => {
+    console.log(downloadDelta);
+
+    if (downloadDelta.state) {
+        let downloadItemID = downloadDelta.id;
+        let downloadItemState = downloadDelta.state.current;
+
+        let downloadItem = document.querySelector(`.download-item[data-id="${downloadItemID}"]`);
+        downloadItem.setAttribute("data-state", downloadItemState);
+
+        if (downloadItemState === "in_progress") {
+            downloadItem.querySelector(".download-item-progress-bar").classList.remove("skeleton");
+        } else if (downloadItemState === "complete") {
+            downloadItem.querySelector(".download-item-progress-bar").classList.add("complete");
+        }
+    }
+
+    if (downloadDelta.paused) {
+        let downloadItemID = downloadDelta.id;
+        let downloadItemPaused = downloadDelta.paused.current;
+
+        let downloadItem = document.querySelector(`.download-item[data-id="${downloadItemID}"]`);
+        downloadItem.setAttribute("data-paused", downloadItemPaused);
+    }
+});
+
+// Handle storage changes (new downloads)
 browser.storage.local.onChanged.addListener(changes => {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
         if (!isNaN(key)) {
@@ -15,11 +45,38 @@ browser.storage.local.onChanged.addListener(changes => {
     }
 });
 
+// Get all downloads from storage when popup is opened
+browser.storage.local.get().then(result => {
+    console.log(result);
+
+    if (Object.keys(result).length === 0) {
+        document.getElementById("no_downloads").classList.remove("hidden");
+    } else {
+        for (let [_key, value] of Object.entries(result)) {
+            addDownloadItem(value);
+        }
+    }
+});
+
+// Periodically update download progress
+setInterval(() => {
+    downloadItemIDs.forEach(downloadItemID => {
+        browser.downloads.search({ id: downloadItemID }).then(downloadItems => {
+            let downloadItem = downloadItems[0];
+            let downloadItemProgress = downloadItem.bytesReceived / downloadItem.totalBytes * 100;
+
+            updateDownloadProgress(downloadItemID, Math.floor(downloadItemProgress));
+        });
+    });
+}, 1500);
+
 
 function addDownloadItem(downloadItem) {
     console.log(downloadItem);
 
     document.getElementById("no_downloads").classList.add("hidden");
+
+    downloadItemIDs.push(downloadItem.id);
 
     let downloadList = document.getElementById("download_list");
 
@@ -91,4 +148,13 @@ function addDownloadItem(downloadItem) {
     downloadItemContainer.appendChild(downloadItemActions);
 
     downloadList.appendChild(downloadItemContainer);
+}
+
+function updateDownloadProgress(downloadItemID, progress) {
+    let downloadItem = document.querySelector(`.download-item[data-id="${downloadItemID}"]`);
+    let downloadItemProgressFill = downloadItem.querySelector(".download-item-progress-fill");
+    let downloadItemProgressText = downloadItem.querySelector(".download-item-progress-text");
+
+    downloadItemProgressFill.style.width = `${progress}%`;
+    downloadItemProgressText.textContent = `${progress}%`;
 }
