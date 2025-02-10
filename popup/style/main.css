@@ -29,6 +29,7 @@ html, body {
 html { background-color: #0c121a; }
 
 #page_container {
+    position: relative;
     display: flex;
     flex-direction: row;
     width: var(--max-width);

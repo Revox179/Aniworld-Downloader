@@ -327,7 +327,6 @@ function addDownloadListener() {
                     Request: download\nURL: ${link.getAttribute("data-url")}\nError: ${"Empty response"}`);
                     return;
                 }
-                console.log("Download started!");
             }).catch(error => {
                 console.error(`An error occurred while sending message to background script: \n\
                 Request: download\nError: ${error}`);
