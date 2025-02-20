@@ -63,9 +63,22 @@ setInterval(() => {
     downloadItemIDs.forEach(downloadItemID => {
         browser.downloads.search({ id: downloadItemID }).then(downloadItems => {
             let downloadItem = downloadItems[0];
-            let downloadItemProgress = downloadItem.bytesReceived / downloadItem.totalBytes * 100;
 
-            updateDownloadProgress(downloadItemID, Math.floor(downloadItemProgress));
+            switch (downloadItem.state) {
+                case "in_progress":
+                    let downloadItemProgress = downloadItem.bytesReceived / downloadItem.totalBytes * 100;
+                    updateDownloadProgress(downloadItemID, Math.floor(downloadItemProgress));
+                    break;
+
+                case "complete":
+                    updateDownloadProgress(downloadItemID, 100);
+                    break;
+
+                case "interrupted":
+                    updateDownloadProgress(downloadItemID, -1);
+                    break;
+            }
+
         });
     });
 }, 1500);
@@ -151,10 +164,44 @@ function addDownloadItem(downloadItem) {
 }
 
 function updateDownloadProgress(downloadItemID, progress) {
-    let downloadItem = document.querySelector(`.download-item[data-id="${downloadItemID}"]`);
-    let downloadItemProgressFill = downloadItem.querySelector(".download-item-progress-fill");
-    let downloadItemProgressText = downloadItem.querySelector(".download-item-progress-text");
+    const downloadItem = document.querySelector(`.download-item[data-id="${downloadItemID}"]`);
 
-    downloadItemProgressFill.style.width = `${progress}%`;
-    downloadItemProgressText.textContent = `${progress}%`;
+    const downloadItemProgressBar = downloadItem.querySelector(".download-item-progress-bar");
+    const downloadItemProgressFill = downloadItem.querySelector(".download-item-progress-fill");
+    const downloadItemProgressText = downloadItem.querySelector(".download-item-progress-text");
+    const actionCancel = downloadItem.querySelector(".download-item-action-cancel");
+    const cancelIcon = actionCancel.firstChild;
+
+
+
+    switch (progress) {
+        case -1:
+            downloadItemProgressBar.classList.add("hidden");
+            downloadItemProgressText.textContent = "Cancelled";
+
+            cancelIcon.src = "images/reload.svg";
+            cancelIcon.classList.remove("cancel-icon");
+            cancelIcon.classList.add("reload-icon");
+            cancelIcon.nextElementSibling.classList.add("hidden");
+            break;
+
+        case 100:
+            downloadItemProgressBar.classList.add("hidden");
+            downloadItemProgressBar.classList.add("complete");
+            actionCancel.classList.add("hidden");
+            break;
+
+        default:
+            actionCancel.classList.remove("hidden");
+
+            cancelIcon.src = "images/cancel.svg";
+            cancelIcon.classList.add("cancel-icon");
+            cancelIcon.classList.remove("reload-icon");
+            cancelIcon.nextElementSibling.classList.remove("hidden");
+
+            downloadItemProgressBar.classList.remove("hidden");
+            downloadItemProgressFill.style.width = `${progress}%`;
+            downloadItemProgressText.textContent = `${progress}%`;
+            break;
+    }
 }

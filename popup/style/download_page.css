@@ -128,7 +128,12 @@
     transition: none;
 }
 
-.download-item-action-cancel:hover .cancel-icon {
+.reload-icon {
+    display: block !important;
+}
+
+.download-item-action-cancel:hover .cancel-icon,
+.download-item-action-cancel:hover .reload-icon {
     filter: invert(26%) sepia(96%) saturate(6289%) hue-rotate(353deg) brightness(87%) contrast(105%);
 }
 
