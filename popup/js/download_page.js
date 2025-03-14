@@ -204,7 +204,7 @@ function updateDownloadProgress(downloadItemID, progress) {
             downloadItemProgressBar.remove();
             downloadItemProgressText.textContent = "Cancelled";
 
-            downloadItemAction.style.visibility = "hidden";
+            downloadItemAction.classList.add("hidden");
             break;
 
         // Paused
@@ -226,7 +226,7 @@ function updateDownloadProgress(downloadItemID, progress) {
             downloadItemProgressBar.classList.add("hidden");
             downloadItemProgressText.textContent = "100% · Finished";
 
-            downloadItemAction.style.visibility = "hidden";
+            downloadItemAction.classList.add("hidden");
             break;
 
         // In progress

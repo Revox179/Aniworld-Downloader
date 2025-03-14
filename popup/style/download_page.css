@@ -139,6 +139,7 @@
     border-radius: 50%;
     color: #a0a0a0;
     cursor: pointer;
+    grid-column: 2;
 }
 
 .load {
