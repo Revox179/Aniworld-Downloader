@@ -224,8 +224,9 @@ function updateDownloadProgress(downloadItemID, progress) {
             downloadItem.setAttribute("data-state", "complete");
 
             downloadItemProgressBar.classList.add("hidden");
-            downloadItemProgressBar.classList.add("complete");
-            downloadItemAction.classList.add("hidden");
+            downloadItemProgressText.textContent = "100% · Finished";
+
+            downloadItemAction.style.visibility = "hidden";
             break;
 
         // In progress
