@@ -8,21 +8,22 @@ browser.downloads.onChanged.addListener(downloadDelta => {
         let downloadItemID = downloadDelta.id;
         let downloadItemState = downloadDelta.state.current;
 
+        if (downloadItemState === "interrupted") {
+            downloadItemState = (downloadDelta?.paused?.current) ? "paused" : "interrupted";
+        }
+
         let downloadItem = document.querySelector(`.download-item[data-id="${downloadItemID}"]`);
         downloadItem.setAttribute("data-state", downloadItemState);
 
+        browser.storage.local.get(downloadItemID.toString()).then(result => {
+            let downloadItemData = result[downloadItemID.toString()];
+            downloadItemData.state = downloadItemState;
+            browser.storage.local.set({ [downloadItemID.toString()]: downloadItemData });
+        });
+
         if (downloadItemState === "in_progress") {
             downloadItem.querySelector(".download-item-progress-bar").classList.remove("skeleton");
-        } else if (downloadItemState === "complete") {
-            downloadItem.querySelector(".download-item-progress-bar").classList.add("complete");
         }
-    }
-
-    if (downloadDelta?.paused?.current) {
-        let downloadItemID = downloadDelta.id;
-
-        let downloadItem = document.querySelector(`.download-item[data-id="${downloadItemID}"]`);
-        downloadItem.setAttribute("data-state", "paused");
     }
 });
 
@@ -185,6 +186,21 @@ function addDownloadItem(downloadItem) {
     downloadItemContainer.appendChild(downloadItemControls);
 
     downloadList.appendChild(downloadItemContainer);
+
+    switch (downloadItem.state) {
+        case "complete":
+            updateDownloadProgress(downloadItem.id, 100);
+            break;
+        case "interrupted":
+            updateDownloadProgress(downloadItem.id, -100);
+            break;
+        case "in_progress":
+            updateDownloadProgress(downloadItem.id, 0);
+            break;
+        case "paused":
+            updateDownloadProgress(downloadItem.id, -1);
+            break;
+    }
 }
 
 function updateDownloadProgress(downloadItemID, progress) {
@@ -227,6 +243,7 @@ function updateDownloadProgress(downloadItemID, progress) {
             downloadItemProgressText.textContent = "100% · Finished";
 
             downloadItemAction.classList.add("hidden");
+            downloadItemIDs.splice(downloadItemIDs.indexOf(downloadItemID), 1);
             break;
 
         // In progress

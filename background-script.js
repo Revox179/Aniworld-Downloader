@@ -198,7 +198,7 @@ async function downloadStarted(id) {
     const { filename: fullPath, startTime: start, url } = downloadItem;
     const filename = fullPath.split("/").pop();
     await browser.storage.local.set(
-        { [id]: { filename, start, ends: null, state: "active", url } }
+        { [id.toString()]: { filename, start, state: "in_progress", url } }
     )
     console.log(`Download started: ${filename}`);
 }
