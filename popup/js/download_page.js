@@ -1,6 +1,6 @@
 var downloadItemIDs = new Array();
 
-// Handle download state changes (in_progress, complete)
+// Handle download state changes (in_progress, complete, paused)
 browser.downloads.onChanged.addListener(downloadDelta => {
     console.log(downloadDelta);
 
@@ -18,12 +18,11 @@ browser.downloads.onChanged.addListener(downloadDelta => {
         }
     }
 
-    if (downloadDelta.paused) {
+    if (downloadDelta?.paused?.current) {
         let downloadItemID = downloadDelta.id;
-        let downloadItemPaused = downloadDelta.paused.current;
 
         let downloadItem = document.querySelector(`.download-item[data-id="${downloadItemID}"]`);
-        downloadItem.setAttribute("data-paused", downloadItemPaused);
+        downloadItem.setAttribute("data-state", "paused");
     }
 });
 
@@ -39,6 +38,7 @@ browser.storage.local.onChanged.addListener(changes => {
             // -> Add a new download item to the list
             if (oldValue === null || oldValue === undefined) {
                 console.log("Adding new download item to the list");
+                newValue.id = parseInt(key);
                 addDownloadItem(newValue);
             }
         }
@@ -52,7 +52,8 @@ browser.storage.local.get().then(result => {
     if (Object.keys(result).length === 0) {
         document.getElementById("no_downloads").classList.remove("hidden");
     } else {
-        for (let [_key, value] of Object.entries(result)) {
+        for (let [key, value] of Object.entries(result)) {
+            value.id = parseInt(key);
             addDownloadItem(value);
         }
     }
@@ -75,7 +76,11 @@ setInterval(() => {
                     break;
 
                 case "interrupted":
-                    updateDownloadProgress(downloadItemID, -1);
+                    if (downloadItem.paused) {
+                        updateDownloadProgress(downloadItemID, -1);
+                    } else {
+                        updateDownloadProgress(downloadItemID, -100);
+                    }
                     break;
             }
 
@@ -126,23 +131,42 @@ function addDownloadItem(downloadItem) {
     downloadItemInfo.appendChild(downloadItemTitle);
     downloadItemInfo.appendChild(downloadItemProgress);
 
-    let downloadItemActions = document.createElement("div");
-    downloadItemActions.className = "download-item-actions";
+    let downloadItemControls = document.createElement("div");
+    downloadItemControls.className = "download-item-controls";
 
-    let downloadItemActionCancel = document.createElement("a");
-    downloadItemActionCancel.className = "download-item-action-cancel";
-    downloadItemActionCancel.setAttribute("role", "button");
+    let downloadItemAction = document.createElement("a");
+    downloadItemAction.className = "download-item-action";
+    downloadItemAction.setAttribute("role", "button");
 
-    let cancelIcon = document.createElement("img");
-    cancelIcon.className = "cancel-icon";
-    cancelIcon.src = "images/cancel.svg";
-    cancelIcon.alt = "";
+    let pauseIcon = document.createElement("img");
+    pauseIcon.src = "images/pause.svg";
 
     let loadDiv = document.createElement("div");
     loadDiv.className = "load";
 
-    downloadItemActionCancel.appendChild(cancelIcon);
-    downloadItemActionCancel.appendChild(loadDiv);
+    downloadItemAction.appendChild(pauseIcon);
+    downloadItemAction.appendChild(loadDiv);
+
+    // Append event handler for pause/resume
+    downloadItemAction.addEventListener('click', function() {
+        let id = downloadItem.id;
+        switch (downloadItemContainer.getAttribute("data-state")) {
+            case "in_progress":
+                downloadItemContainer.setAttribute("data-state", "paused");
+                browser.downloads.pause(id).then(() => {
+                    console.log("Pause download", id);
+                }).catch(err => console.error(err));
+                updateDownloadProgress(id, -1);
+                break;
+            case "paused":
+                downloadItemContainer.setAttribute("data-state", "in_progress");
+                browser.downloads.resume(id).then(() => {
+                    console.log("Resumed download", id);
+                }).catch(err => console.error(err));
+                updateDownloadProgress(id, 0);
+                break;
+        }
+    });
 
     let downloadItemActionMenu = document.createElement("a");
     downloadItemActionMenu.className = "download-item-action-menu";
@@ -154,11 +178,11 @@ function addDownloadItem(downloadItem) {
 
     downloadItemActionMenu.appendChild(menuIcon);
 
-    downloadItemActions.appendChild(downloadItemActionCancel);
-    downloadItemActions.appendChild(downloadItemActionMenu);
+    downloadItemControls.appendChild(downloadItemAction);
+    downloadItemControls.appendChild(downloadItemActionMenu);
 
     downloadItemContainer.appendChild(downloadItemInfo);
-    downloadItemContainer.appendChild(downloadItemActions);
+    downloadItemContainer.appendChild(downloadItemControls);
 
     downloadList.appendChild(downloadItemContainer);
 }
@@ -169,35 +193,49 @@ function updateDownloadProgress(downloadItemID, progress) {
     const downloadItemProgressBar = downloadItem.querySelector(".download-item-progress-bar");
     const downloadItemProgressFill = downloadItem.querySelector(".download-item-progress-fill");
     const downloadItemProgressText = downloadItem.querySelector(".download-item-progress-text");
-    const actionCancel = downloadItem.querySelector(".download-item-action-cancel");
-    const cancelIcon = actionCancel.firstChild;
-
-
+    const downloadItemAction = downloadItem.querySelector(".download-item-action");
+    const actionIcon = downloadItemAction.firstChild;
 
     switch (progress) {
-        case -1:
-            downloadItemProgressBar.classList.add("hidden");
+        // Interrupted
+        case -100:
+            downloadItem.setAttribute("data-state", "interrupted");
+
+            downloadItemProgressBar.remove();
             downloadItemProgressText.textContent = "Cancelled";
 
-            cancelIcon.src = "images/reload.svg";
-            cancelIcon.classList.remove("cancel-icon");
-            cancelIcon.classList.add("reload-icon");
-            cancelIcon.nextElementSibling.classList.add("hidden");
+            downloadItemAction.style.visibility = "hidden";
             break;
 
+        // Paused
+        case -1:
+            downloadItem.setAttribute("data-state", "paused");
+
+            downloadItemProgressBar.classList.add("hidden");
+            downloadItemProgressText.textContent = "Paused";
+
+            actionIcon.src = "images/resume.svg";
+            actionIcon.style.display = "block";
+            actionIcon.nextElementSibling.classList.add("hidden");
+            break;
+
+        // Completed
         case 100:
+            downloadItem.setAttribute("data-state", "complete");
+
             downloadItemProgressBar.classList.add("hidden");
             downloadItemProgressBar.classList.add("complete");
-            actionCancel.classList.add("hidden");
+            downloadItemAction.classList.add("hidden");
             break;
 
+        // In progress
         default:
-            actionCancel.classList.remove("hidden");
+            downloadItem.setAttribute("data-state", "in_progress");
+            downloadItemAction.classList.remove("hidden");
 
-            cancelIcon.src = "images/cancel.svg";
-            cancelIcon.classList.add("cancel-icon");
-            cancelIcon.classList.remove("reload-icon");
-            cancelIcon.nextElementSibling.classList.remove("hidden");
+            actionIcon.src = "images/pause.svg";
+            actionIcon.style.display = "none";
+            actionIcon.nextElementSibling.classList.remove("hidden");
 
             downloadItemProgressBar.classList.remove("hidden");
             downloadItemProgressFill.style.width = `${progress}%`;
