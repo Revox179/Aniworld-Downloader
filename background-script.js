@@ -24,7 +24,7 @@ browser.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     }
     if (msg.cmd === "download") {
         // query downlaod link
-        getVideoLink(msg.url).then(link => {
+        getStreamLink(msg.url).then(link => {
             if (!link) { sendResponse({ result: false }); return; }
             console.log("Video link: " + link);
             // get video source (download link)
@@ -102,6 +102,17 @@ async function searchQuery(query) {
     }
 }
 
+/**
+ * Fetches and parses information about an anime, including its title, cover image, and season links.
+ *
+ * @param {string} anime - The URL or identifier of the anime to fetch information for.
+ * @returns {Promise<Object|boolean>} A promise that resolves to an object containing the anime's title, cover image URL,
+ *                                    and season links, or `false` if an error occurs or data is unavailable.
+ * @property {string} return.title - The title of the anime.
+ * @property {string} return.cover - The full URL of the anime's cover image.
+ * @property {Object} return.seasonLinks - An object containing season and film links categorized as "seasons" and "films".
+ * @throws {Error} Logs an error message to the console if an exception occurs during processing.
+ */
 async function getAnimeInfo(anime) {
     const doc = await fetchAndParse(anime);
     if (!doc) { return false; }
@@ -120,8 +131,18 @@ async function getAnimeInfo(anime) {
     }
 }
 
-async function getSeasonLinks(anime) {
-    const doc = await fetchAndParse(anime);
+/**
+ * Fetches and parses the season and film links for a given anime page.
+ *
+ * @param {string} anime_link - The URL of the anime page to fetch and parse.
+ * @returns {Promise<Object|boolean>} An object containing season and film links categorized as "seasons" and "films",
+ *                                    or `false` if the document could not be fetched or parsed.
+ * @property {Object} return.films - An object containing film links, where keys are film names and values are URLs.
+ * @property {Object} return.seasons - An object containing season links, where keys are season names and values are URLs.
+ * @throws {Error} Logs an error message to the console if an exception occurs during processing.
+ */
+async function getSeasonLinks(anime_link) {
+    const doc = await fetchAndParse(anime_link);
     if (!doc) { return false; }
     const seasons = doc.querySelector("#stream ul").querySelectorAll("a");
     const seasonLinks = { "films": {}, "seasons": {} };
@@ -135,8 +156,19 @@ async function getSeasonLinks(anime) {
     return seasonLinks;
 }
 
-async function getEpisodeLinks(season) {
-    const doc = await fetchAndParse(season);
+/**
+ * Fetches and parses the episode links for a given season.
+ *
+ * @param {string} season_link - The URL or identifier of the season to fetch episode links for.
+ * @returns {Promise<Object|boolean>} A promise that resolves to an object containing episode details,
+ *                                    or `false` if the document could not be fetched or parsed.
+ *                                    The object keys are episode numbers, and the values are objects with the following properties:
+ *                                    - `name` {string}: The name of the episode.
+ *                                    - `link` {string}: The full URL to the episode.
+ *                                    - `langs` {string[]}: An array of language codes available for the episode.
+ */
+async function getEpisodeLinks(season_link) {
+    const doc = await fetchAndParse(season_link);
     if (!doc) { return false; }
     const episodes = doc.querySelectorAll(".seasonEpisodeTitle a");
     const episodeLinks = {};
@@ -155,11 +187,37 @@ async function getEpisodeLinks(season) {
     return episodeLinks;
 }
 
-async function getVideoLink(episode) {
-    const doc = await fetchAndParse(episode);
+/**
+ * Fetches and parses the streaming link for a given episode. This just the refered link from aniworld. The actual
+ * video link to the mp4 file can be get from the page behind this link (see getVideoSource function).
+ *
+ * @param {string} episode_link - The URL of the episode page to fetch.
+ * @returns {Promise<string|boolean>} A promise that resolves to the streaming link for the episode,
+ *                                    or `false` if the document could not be fetched or parsed.
+ * @throws {Error} Logs an error message to the console if an exception occurs during processing.
+ */
+async function getStreamLink(episode_link) {
+    const doc = await fetchAndParse(episode_link);
     if (!doc) { return false; }
-    const vlink = doc.querySelector('[title="Hoster Vidoza"]').parentElement.getAttribute("href");
-    return `https://aniworld.to${vlink}`;
+    const vlink = doc.querySelector('[title="Hoster VOE"]').parentElement.getAttribute("href");
+
+    const referrerPage = await fetchAndParse(`https://aniworld.to/${vlink}`);
+    if (!referrerPage) { return false; }
+
+    for (let script of referrerPage.scripts) {
+        const scriptContent = script.textContent;
+
+        // search for actual redirect link
+        if (scriptContent.includes("window.location.href")) {
+            const match = scriptContent.match(/window\.location\.href\s*=\s*['"]([^'"]+)['"]/);
+            if (match && match[1]) {
+                console.log("Found redirect link: " + match[1]);
+                return match[1];
+            }
+        }
+    }
+
+    return false;
 }
 
 
@@ -172,9 +230,21 @@ async function getVideoSource(url) {
     try {
         const doc = await fetchAndParse(url);
         if (!doc) { return false; }
-        const video = doc.querySelector("#player source");
-        return video.getAttribute("src");
 
+        for (let script of doc.scripts) {
+            const scriptContent = script.textContent;
+
+            // search for the 'sources' variable and extract the base64 encoded mp4-video string
+            if (scriptContent.includes("var sources")) {
+                const match = scriptContent.match(/'mp4':\s*'([^']+)'/);
+                if (match && match[1]) {
+                    console.log("Found: " + match[1]);
+                    // decode the base64 encoded string
+                    return atob(match[1]);
+                }
+            }
+        }
+        return false;
     } catch (error) {
         console.error(`An error occured while fetching video source: ${error}\nURL: ${url}`);
         return false;
