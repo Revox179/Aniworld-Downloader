@@ -146,9 +146,14 @@ function createDownloadPage(url) {
         }
 
         // add toggle season/film fold event
-        document.querySelectorAll(".head").forEach(head => {
+        document.querySelectorAll(".head h2").forEach(head => {
             head.addEventListener("click", () => {
-                head.nextElementSibling.classList.toggle("fold");
+                const sibling = head.parentElement?.nextElementSibling;
+                if (sibling) {
+                    sibling.classList.toggle("fold");
+                } else {
+                    console.warn("Expected sibling element not found for toggling.");
+                }
             });
         });
     })
@@ -327,11 +332,20 @@ function addDownloadListener() {
                     Request: download\nURL: ${link.getAttribute("data-url")}\nError: ${"Empty response"}`);
                     return;
                 }
-                console.log("Download started!");
             }).catch(error => {
                 console.error(`An error occurred while sending message to background script: \n\
                 Request: download\nError: ${error}`);
             });
         });
     });
+
+    document.querySelectorAll("a.download-all").forEach(download_button => {
+        download_button.addEventListener("click", () => {
+            const episodes = download_button.parentElement.nextElementSibling
+            for (let episode of episodes.children) {
+                episode.querySelector("a.download").click();
+            }
+        });
+    });
+
 }

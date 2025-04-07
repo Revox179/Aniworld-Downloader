@@ -3,89 +3,175 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style/main.css">
+    <link rel="stylesheet" href="style/search_page.css">
+    <link rel="stylesheet" href="style/download_page.css">
+    <link rel="stylesheet" href="style/settings_page.css">
 </head>
 
 <body>
-    <div class="url-search-wrapper">
-        <input type="text" id="url_search" placeholder="Search your favorite anime!">
-        <button id="search"><img src="images/arrow-right.svg" alt=""></button>
-    </div>
-    <span id="no_results" class="hidden">No results found!</span>
-    <div class="no-search" id="no_search">
-        <h1>Search for an anime!</h1>
-    </div>
-    <div class="search-list hidden" id="search_results">
-        <div class="item demo">
-            <div class="item-title skeleton">Anime Title</div>
-            <div class="item-description skeleton"></div>
-            <div class="item-demo-2nd-line skeleton"></div>
+    <div id="page_container">
+        <div class="page" id="search_page">
+            <div class="url-search-wrapper">
+                <input type="text" id="url_search" placeholder="Search your favorite anime!">
+                <button id="search"><img src="images/arrow-right.svg" alt=""></button>
+            </div>
+            <span id="no_results" class="hidden">No results found!</span>
+            <div class="no-search" id="no_search">
+                <h1>Search for an anime!</h1>
+            </div>
+            <div class="search-list hidden" id="search_results">
+                <div class="item demo">
+                    <div class="item-title skeleton">Anime Title</div>
+                    <div class="item-description skeleton"></div>
+                    <div class="item-demo-2nd-line skeleton"></div>
+                </div>
+                <div class="item demo">
+                    <div class="item-title skeleton">Anime Title</div>
+                    <div class="item-description skeleton"></div>
+                    <div class="item-demo-2nd-line skeleton"></div>
+                </div>
+                <div class="item demo">
+                    <div class="item-title skeleton">Anime Title</div>
+                    <div class="item-description skeleton"></div>
+                    <div class="item-demo-2nd-line skeleton"></div>
+                </div>
+            </div>
+            <div class="anime-box hidden" id="anime_infobox">
+                <div class="anime-image skeleton" id="cover_holder"></div>
+                <div class="anime-infos">
+                    <h1 class="anime-title skeleton" id="anime_title"></h1>
+                    <div class="anime-stats">
+                        <p class="stat skeleton">Seasons:<span id="season_count"></span></p>
+                        <p class="stat skeleton">Filme:<span id="film_count"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="seasons hidden" id="season_list">
+                <div class="season demo" id="demo_season">
+                    <span class="head skeleton">
+                        <h2 class="season-title">Season 1</h2>
+                        <a class="download">
+                            <img src="images/download.svg">
+                        </a>
+                    </span>
+                    <div class="episodes">
+                        <span class="episode skeleton">
+                            <h3 class="episode-title"></h3>
+                            <a class="download"><img src="images/download.svg"></a>
+                        </span>
+                        <span class="episode skeleton">
+                            <h3 class="episode-title"></h3>
+                            <a class="download"><img src="images/download.svg"></a>
+                        </span>
+                        <span class="episode skeleton">
+                            <h3 class="episode-title"></h3>
+                            <a class="download"><img src="images/download.svg"></a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="films hidden" id="film_list">
+                <div class="film demo" id="demo_film">
+                    <span class="head skeleton">
+                        <h2 class="film-title">Filme</h2>
+                        <a class="download">
+                            <img src="images/download.svg">
+                        </a>
+                    </span>
+                    <div class="episodes">
+                        <span class="episode skeleton">
+                            <h3 class="episode-title"></h3>
+                            <a class="download"><img src="images/download.svg"></a>
+                        </span>
+                        <span class="episode skeleton">
+                            <h3 class="episode-title"></h3>
+                            <a class="download"><img src="images/download.svg"></a>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="item demo">
-            <div class="item-title skeleton">Anime Title</div>
-            <div class="item-description skeleton"></div>
-            <div class="item-demo-2nd-line skeleton"></div>
+        <div class="page hidden" id="download_page">
+            <p id="no_downloads">Currently no downloads</p>
+            <div id="download_list">
+                <!-- <div class="download-item">
+                    <div class="download-item-info">
+                        <div class="download-item-title">Anime Title is very long quite too long</div>
+                        <div class="download-item-progress">
+                            <div class="download-item-progress-bar skeleton">
+                                <div class="download-item-progress-fill"></div>
+                            </div>
+                            <div class="download-item-progress-text">0%</div>
+                        </div>
+                    </div>
+                    <div class="download-item-actions">
+                        <a class="download-item-action-cancel" role="button">
+                            <img class="cancel-icon" src="images/cancel.svg" alt="">
+                            <div class="load"></div>
+                        </a>
+                        <a class="download-item-action-menu" role="button">
+                            <img src="images/menu-dots.svg" alt="">
+                        </a>
+                    </div>
+                </div> -->
+            </div>
         </div>
-        <div class="item demo">
-            <div class="item-title skeleton">Anime Title</div>
-            <div class="item-description skeleton"></div>
-            <div class="item-demo-2nd-line skeleton"></div>
-        </div>
-    </div>
-    <div class="anime-box hidden" id="anime_infobox">
-        <div class="anime-image skeleton" id="cover_holder"></div>
-        <div class="anime-infos">
-            <h1 class="anime-title skeleton" id="anime_title"></h1>
-            <div class="anime-stats">
-                <p class="stat skeleton">Seasons:<span id="season_count"></span></p>
-                <p class="stat skeleton">Filme:<span id="film_count"></span></p>
+        <div class="page hidden" id="settings_page">
+            <div id="disclaimer">
+                <h1>Disclaimer</h1>
+                <p>
+                    This extension does not share or distribute copyrighted content. It simply provides tools to access information already freely and publicly available resources. The developer is not responsible for external links or their content.<br>
+                    If you have concerns regarding the content accessed through this tool, please contact the administrators, owners, or hosts of the respective websites directly.
+                </p>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-title">Parallel downloads</div>
+
+                <div class="settings-item-description">
+                    The amount of downloads that will be done at the same time. Too many downloads at the same time can
+                    slow down your internet connection or limitations from the server.
+                </div>
+                <div class="settings-item-body">
+                    <div class="increase-element">
+                        <div role="button" id="decrease_parallel_downloads">-</div>
+                        <input type="number" id="parallel_downloads" value="1">
+                        <div role="button" id="increase_parallel_downloads">+</div>
+                    </div>
+                </div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-item-title">Filenaming</div>
+                <div class="settings-item-description">
+                    The filename of downloaded files. You can use the following placeholders:
+                    <ul>
+                        <li>{anime_title} - The title of the anime</li>
+                        <li>{episode_title} - The title of the episode</li>
+                        <li>{season_number} - The number of the season</li>
+                        <li>{episode_number} - The number of the episode</li>
+                    </ul>
+                </div>
+                <div class="settings-item-body">
+                    <input type="text" id="filename"
+                        value="{anime_title} - {episode_title} S{season_number}E{episode_number}">
+                </div>
             </div>
         </div>
     </div>
-    <div class="seasons hidden" id="season_list">
-        <div class="season demo" id="demo_season">
-            <span class="head skeleton">
-                <h2 class="season-title">Season 1</h2>
-                <a class="download">
-                    <img src="images/download.svg">
-                </a>
-            </span>
-            <div class="episodes">
-                <span class="episode skeleton">
-                    <h3 class="episode-title"></h3>
-                    <a class="download"><img src="images/download.svg"></a>
-                </span>
-                <span class="episode skeleton">
-                    <h3 class="episode-title"></h3>
-                    <a class="download"><img src="images/download.svg"></a>
-                </span>
-                <span class="episode skeleton">
-                    <h3 class="episode-title"></h3>
-                    <a class="download"><img src="images/download.svg"></a>
-                </span>
-            </div>
+    <div id="page_navbar">
+        <div class="tab selected" id="search_tab" data-target="search_page">
+            <img src="images/search-sharp.svg" alt="">
+        </div>
+        <div class="tab" id="download_tab" data-target="download_page">
+            <img src="images/download-icon.svg" alt="">
+        </div>
+        <div class="tab" id="settings_tab" data-target="settings_page">
+            <img src="images/gear-icon.svg" alt="">
         </div>
     </div>
-    <div class="films hidden" id="film_list">
-        <div class="film demo" id="demo_film">
-            <span class="head skeleton">
-                <h2 class="film-title">Filme</h2>
-                <a class="download">
-                    <img src="images/download.svg">
-                </a>
-            </span>
-            <div class="episodes">
-                <span class="episode skeleton">
-                    <h3 class="episode-title"></h3>
-                    <a class="download"><img src="images/download.svg"></a>
-                </span>
-                <span class="episode skeleton">
-                    <h3 class="episode-title"></h3>
-                    <a class="download"><img src="images/download.svg"></a>
-                </span>
-            </div>
-        </div>
-    </div>
-    <script src="popup.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/search_page.js"></script>
+    <script src="js/download_page.js"></script>
 </body>
+
 </html>
