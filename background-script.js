@@ -184,7 +184,7 @@ async function getVideoSource(url) {
 }
 
 function sanitizeFilename(filename) {
-    return filename.replace(/[^a-zA-Z0-9] /g, '') || "video";
+    return filename.replace(/[^a-zA-Z0-9]/g, '') || "video";
 }
 
 async function downloadStarted(id) {
