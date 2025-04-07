@@ -148,7 +148,12 @@ function createDownloadPage(url) {
         // add toggle season/film fold event
         document.querySelectorAll(".head h2").forEach(head => {
             head.addEventListener("click", () => {
-                head.parentElement.nextElementSibling.classList.toggle("fold");
+                const sibling = head.parentElement?.nextElementSibling;
+                if (sibling) {
+                    sibling.classList.toggle("fold");
+                } else {
+                    console.warn("Expected sibling element not found for toggling.");
+                }
             });
         });
     })
