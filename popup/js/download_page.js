@@ -2,8 +2,6 @@ var downloadItemIDs = new Array();
 
 // Handle download state changes (in_progress, complete, paused)
 browser.downloads.onChanged.addListener(downloadDelta => {
-    console.log(downloadDelta);
-
     if (downloadDelta.state) {
         let downloadItemID = downloadDelta.id;
         let downloadItemState = downloadDelta.state.current;
@@ -31,9 +29,6 @@ browser.downloads.onChanged.addListener(downloadDelta => {
 browser.storage.local.onChanged.addListener(changes => {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
         if (!isNaN(key)) {
-            console.log(`The key "${key}" is a number.`);
-            console.log(`Old value: ${oldValue}`);
-            console.log(`New value: ${newValue}`);
 
             // If old value is null, then it is a new download
             // -> Add a new download item to the list
@@ -151,20 +146,23 @@ function addDownloadItem(downloadItem) {
     // Append event handler for pause/resume
     downloadItemAction.addEventListener('click', function() {
         let id = downloadItem.id;
-        switch (downloadItemContainer.getAttribute("data-state")) {
+        console.log("Download item action clicked", id);
+        let state = downloadItemContainer.getAttribute("data-state")
+        console.log("Currently: ", state);
+        switch (state) {
             case "in_progress":
-                downloadItemContainer.setAttribute("data-state", "paused");
                 browser.downloads.pause(id).then(() => {
-                    console.log("Pause download", id);
+                    console.log("Paused download", id);
+                    downloadItemContainer.setAttribute("data-state", "paused");
+                    updateDownloadProgress(id, -1);
                 }).catch(err => console.error(err));
-                updateDownloadProgress(id, -1);
                 break;
             case "paused":
-                downloadItemContainer.setAttribute("data-state", "in_progress");
                 browser.downloads.resume(id).then(() => {
                     console.log("Resumed download", id);
+                    downloadItemContainer.setAttribute("data-state", "in_progress");
+                    updateDownloadProgress(id, 0);
                 }).catch(err => console.error(err));
-                updateDownloadProgress(id, 0);
                 break;
         }
     });
