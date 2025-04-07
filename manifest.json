@@ -18,8 +18,8 @@
     ],
     "host_permissions": [
         "*://aniworld.to/*",
-        "*://vidoza.net/*",
-        "*://videzz.net/*"
+        "*://nathanfromsubject.com/*",
+        "*://voe.sx/*"
     ],
     "action": {
         "default_icon": "logo-64.png",
