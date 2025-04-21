@@ -61,6 +61,15 @@ setInterval(() => {
         browser.downloads.search({ id: downloadItemID }).then(downloadItems => {
             let downloadItem = downloadItems[0];
 
+            if (!downloadItem) {
+                console.log(`Download Item with ID ${downloadItemID} seems to be removed`);
+                browser.storage.local.remove(downloadItemID.toString());
+                downloadItemIDs.splice(downloadItemIDs.indexOf(downloadItemID), 1);
+                let downloadItemElement = document.querySelector(`.download-item[data-id="${downloadItemID}"]`);
+                if (downloadItemElement) { downloadItemElement.remove(); }
+                return
+            }
+
             switch (downloadItem.state) {
                 case "in_progress":
                     let downloadItemProgress = downloadItem.bytesReceived / downloadItem.totalBytes * 100;
@@ -144,7 +153,7 @@ function addDownloadItem(downloadItem) {
     downloadItemAction.appendChild(loadDiv);
 
     // Append event handler for pause/resume
-    downloadItemAction.addEventListener('click', function() {
+    downloadItemAction.addEventListener('click', function () {
         let id = downloadItem.id;
         console.log("Download item action clicked", id);
         let state = downloadItemContainer.getAttribute("data-state")
@@ -215,7 +224,7 @@ function updateDownloadProgress(downloadItemID, progress) {
         case -100:
             downloadItem.setAttribute("data-state", "interrupted");
 
-            downloadItemProgressBar.remove();
+            downloadItemProgressBar.classList.add("hidden");
             downloadItemProgressText.textContent = "Cancelled";
 
             downloadItemAction.classList.add("hidden");
