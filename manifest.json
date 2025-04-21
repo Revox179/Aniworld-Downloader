@@ -18,8 +18,8 @@
     ],
     "host_permissions": [
         "*://aniworld.to/*",
-        "*://nathanfromsubject.com/*",
-        "*://voe.sx/*"
+        "*://voe.sx/*",
+        "https://richardsignfish.com/*"
     ],
     "action": {
         "default_icon": "logo-64.png",

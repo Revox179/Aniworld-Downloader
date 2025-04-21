@@ -26,11 +26,9 @@ browser.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
         // query downlaod link
         getStreamLink(msg.url).then(link => {
             if (!link) { sendResponse({ result: false }); return; }
-            console.log("Video link: " + link);
-            // get video source (download link)
             getVideoSource(link).then(source => {
                 if (!source) { sendResponse({ result: false }); return; }
-                console.log("Video source: " + source);
+                console.log("Downloading video from: " + source);
                 // start download
                 browser.downloads.download({
                     url: source,
@@ -220,13 +218,61 @@ async function getStreamLink(episode_link) {
     return false;
 }
 
-
-/********************************************************************************
- * Following functions are used to handle the download requests from the
- * popup script and start the download process.
- ********************************************************************************/
-
+/**
+ * Fetches and parses the video source for a given streaming link. This is the actual mp4 video file.
+ *
+ * @param {string} url - The URL of the streaming page to fetch.
+ * @returns {Promise<string|boolean>} A promise that resolves to the video source URL,
+ *                                    or `false` if the document could not be fetched or parsed.
+ * @throws {Error} Logs an error message to the console if an exception occurs during processing.
+ */
 async function getVideoSource(url) {
+
+    function rot13transform(source) {
+        // See: https://en.wikipedia.org/wiki/ROT13
+        let result = '';
+        for (let char of source) {
+            let charCode = char.charCodeAt(0);
+            if (charCode >= 0x41 && charCode <= 0x5a) {
+                charCode = (charCode - 0x41 + 0xd) % 0x1a + 0x41;
+            } else if (charCode >= 0x61 && charCode <= 0x7a) {
+                charCode = (charCode - 0x61 + 0xd) % 0x1a + 0x61;
+            }
+            result += String.fromCharCode(charCode);
+        }
+        return result;
+    }
+
+    function regex_replace(source) {
+        const patterns = ["@$", "^^", "~@", "%?", "*~", "!!", "#&"];
+        patterns.forEach(pattern => {
+            const regexPattern = new RegExp(pattern.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
+            source = source.replace(regexPattern, "");
+        });
+        return source;
+    }
+
+    function left_shift(source, shift) {
+        let result = [];
+        for (let char of source) {
+            result.push(String.fromCharCode(char.charCodeAt(0) - shift));
+        }
+        return result.join('');
+    }
+
+    function getHighestResFallbackFile(fallback) {
+        if (!Array.isArray(fallback) || fallback.length === 0) {
+            console.error("Invalid or empty fallback array.");
+            return null;
+        }
+
+        // Sort the array by the 'label' property (resolution) in descending order
+        const sortedFallback = fallback.sort((a, b) => b.label.localeCompare(a.label));
+
+        // Return the 'file' property of the highest resolution entry (contains the video download URL)
+        return sortedFallback[0]?.file || null;
+    }
+
     try {
         const doc = await fetchAndParse(url);
         if (!doc) { return false; }
@@ -234,24 +280,42 @@ async function getVideoSource(url) {
         for (let script of doc.scripts) {
             const scriptContent = script.textContent;
 
-            // search for the 'sources' variable and extract the base64 encoded mp4-video string
-            if (scriptContent.includes("var sources")) {
-                const match = scriptContent.match(/'mp4':\s*'([^']+)'/);
-                if (match && match[1]) {
-                    console.log("Found: " + match[1]);
-                    // decode the base64 encoded string
-                    return atob(match[1]);
-                }
+            // search for the `MKGMa` string and deobfuscate it
+            if (!scriptContent.includes('MKGMa="')) continue;
+            const obfuscated_string = scriptContent.split('MKGMa="')[1].split('"')[0]
+            const deobfuscated_string = regex_replace(rot13transform(obfuscated_string));
+            const decoded_string = atob(left_shift(atob(deobfuscated_string), 3).split("").reverse().join(""));
+
+            json_data = JSON.parse(decoded_string);
+
+            fallback_file = getHighestResFallbackFile(json_data["fallback"]);
+            if (fallback_file) {
+                console.log("Fallback file: " + fallback_file);
+                return fallback_file;
             }
+
+            console.log("No fallback file found, try using direct access URL.");
+
+            direct_access_url = json_data["direct_access_url"];
+            if (direct_access_url) {
+                console.log("Direct access URL: " + direct_access_url);
+                return direct_access_url;
+            }
+            console.error("No direct access URL found. Can not download video.");
+            return false;
         }
         return false;
     } catch (error) {
         console.error(`An error occured while fetching video source: ${error}\nURL: ${url}`);
         return false;
     }
-
-
 }
+
+/********************************************************************************
+ * Following functions are used to handle the download requests from the
+ * popup script and start the download process.
+ ********************************************************************************/
+
 
 function sanitizeFilename(filename) {
     return filename.replace(/[^a-zA-Z0-9 ]/g, '').trim() || "video";
